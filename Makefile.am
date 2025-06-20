@@ -119,6 +119,36 @@ protobuf-c/protobuf-c.pb.cc protobuf-c/protobuf-c.pb.h: @PROTOC@ $(top_srcdir)/p
 BUILT_SOURCES += \
 		 protobuf-c/protobuf-c.pb.cc \
 		 protobuf-c/protobuf-c.pb.h
+
+#
+# protoc-gen-pawn
+#
+
+bin_PROGRAMS += protoc-gen-pawn/protoc-gen-pawn
+protoc_gen_pawn_protoc_gen_pawn_SOURCES = \
+	protoc-gen-pawn/pawn_enum.cc \
+	protoc-gen-pawn/pawn_enum.h \
+	protoc-gen-pawn/pawn_file.cc \
+	protoc-gen-pawn/pawn_file.h \
+	protoc-gen-pawn/pawn_generator.cc \
+	protoc-gen-pawn/pawn_generator.h \
+	protoc-gen-pawn/pawn_helpers.cc \
+	protoc-gen-pawn/pawn_helpers.h \
+	protoc-gen-pawn/pawn_message.cc \
+	protoc-gen-pawn/pawn_message.h \
+	protoc-gen-pawn/pawn_service.cc \
+	protoc-gen-pawn/pawn_service.h \
+	protoc-gen-pawn/compat.h \
+	protobuf-c/protobuf-c.pb.cc \
+	protobuf-c/protobuf-c.pb.h \
+	protoc-gen-pawn/main.cc
+protoc_gen_pawn_protoc_gen_pawn_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
+	$(protobuf_CFLAGS)
+protoc_gen_pawn_protoc_gen_pawn_LDADD = \
+	-lprotoc \
+	$(protobuf_LIBS)
+
 #
 # protoc-c compat link
 #

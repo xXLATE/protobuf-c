@@ -70,19 +70,16 @@
 
 #include <google/protobuf/compiler/code_generator.h>
 
-#if defined(_WIN32) && defined(PROTOBUF_PAWN_USE_SHARED_LIB)
-# define PROTOBUF_PAWN_EXPORT __declspec(dllexport)
-#else
-# define PROTOBUF_PAWN_EXPORT
-#endif
-
-namespace protobuf_pawn {
+namespace google {
+namespace protobuf {
+namespace compiler {
+namespace pawn {
 
 // CodeGenerator implementation which generates a Pawn source file.
 // If you create your own protocol compiler binary and you want
 // it to support Pawn output, you can do so by registering an instance of this
 // CodeGenerator with the CommandLineInterface in your main() function.
-class PROTOBUF_PAWN_EXPORT PawnGenerator : public google::protobuf::compiler::CodeGenerator {
+class PawnGenerator : public google::protobuf::compiler::CodeGenerator {
  public:
   PawnGenerator();
   ~PawnGenerator();
@@ -100,6 +97,9 @@ class PROTOBUF_PAWN_EXPORT PawnGenerator : public google::protobuf::compiler::Co
 #endif
 };
 
-}  // namespace protobuf_pawn
+}  // namespace pawn
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google
 
 #endif  // PROTOBUF_PAWN_PROTOC_GEN_PAWN_PAWN_GENERATOR_H__

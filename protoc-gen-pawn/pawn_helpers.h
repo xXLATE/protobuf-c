@@ -90,17 +90,11 @@ std::string EnumName(const EnumDescriptor* enum_descriptor);
 // Generate enum value name for the given enum value descriptor.
 std::string EnumValueName(const EnumValueDescriptor* enum_value);
 
-// Generate struct name for the given message descriptor.
-std::string StructName(const Descriptor* descriptor);
+// Generate Pawn-style enum name for a message descriptor.
+std::string MessageEnumName(const Descriptor* descriptor);
 
-// Generate field name for the given field descriptor.
-std::string FieldName(const FieldDescriptor* field);
-
-// Generate service name for the given service descriptor.
-std::string ServiceName(const ServiceDescriptor* service);
-
-// Generate method name for the given method descriptor.
-std::string MethodName(const MethodDescriptor* method);
+// Generate Pawn-style enum field name for a field descriptor.
+std::string MessageFieldName(const FieldDescriptor* field);
 
 // Convert a field's default value to a string representation.
 std::string StringifyDefaultValue(const FieldDescriptor* field);

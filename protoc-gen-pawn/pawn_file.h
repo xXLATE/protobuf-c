@@ -76,25 +76,26 @@
 #include "pawn_message.h"
 #include "pawn_service.h"
 
-namespace protobuf_pawn {
+namespace google {
+namespace protobuf {
+namespace compiler {
+namespace pawn {
 
 class FileGenerator {
  public:
   // See generator.cc for the meaning of dllexport_decl.
-  explicit FileGenerator(const google::protobuf::FileDescriptor* file,
-                         const std::string& dllexport_decl);
+  explicit FileGenerator(const google::protobuf::FileDescriptor* file);
   ~FileGenerator();
 
-  void GeneratePawnSource(google::protobuf::io::Printer* printer);
+  void Generate(google::protobuf::io::Printer* printer);
 
  private:
   const google::protobuf::FileDescriptor* file_;
-
-  std::unique_ptr<std::unique_ptr<MessageGenerator>[]> message_generators_;
-  std::unique_ptr<std::unique_ptr<EnumGenerator>[]> enum_generators_;
-  std::unique_ptr<std::unique_ptr<ServiceGenerator>[]> service_generators_;
 };
 
-}  // namespace protobuf_pawn
+}  // namespace pawn
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google
 
 #endif  // PROTOBUF_PAWN_PROTOC_GEN_PAWN_PAWN_FILE_H__

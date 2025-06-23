@@ -132,27 +132,13 @@ std::string CEscape(const std::string& str) {
   return result;
 }
 
+std::string StringToUpper(const std::string& str) {
+  return absl::AsciiStrToUpper(str);
+}
+
 std::string DotsToUnderscores(const std::string& name) {
   std::string result = name;
   std::replace(result.begin(), result.end(), '.', '_');
-  return result;
-}
-
-std::string UnderscoresToCamelCase(const std::string& name, bool cap_first_letter) {
-  std::string result;
-  bool cap_next_letter = cap_first_letter;
-  
-  for (size_t i = 0; i < name.size(); i++) {
-    if (name[i] == '_') {
-      cap_next_letter = true;
-    } else if (cap_next_letter) {
-      result += toupper(name[i]);
-      cap_next_letter = false;
-    } else {
-      result += tolower(name[i]);
-    }
-  }
-  
   return result;
 }
 
@@ -182,33 +168,11 @@ std::string FilenameToPawnGuard(const std::string& filename) {
 }
 
 std::string EnumName(const EnumDescriptor* enum_descriptor) {
-  std::string result = DotsToUnderscores(enum_descriptor->full_name());
-  return UnderscoresToCamelCase(result, true);
+  return "E_" + StringToUpper(DotsToUnderscores(enum_descriptor->name()));
 }
 
 std::string EnumValueName(const EnumValueDescriptor* enum_value) {
-  std::string enum_name = enum_value->type()->name();
-  std::string value_name = enum_value->name();
-  
-  return enum_name + "_" + UnderscoresToCamelCase(value_name, true);
-}
-
-std::string StructName(const Descriptor* descriptor) {
-  std::string result = DotsToUnderscores(descriptor->full_name());
-  return UnderscoresToCamelCase(result, true);
-}
-
-std::string FieldName(const FieldDescriptor* field) {
-  return UnderscoresToCamelCase(field->name(), false);
-}
-
-std::string ServiceName(const ServiceDescriptor* service) {
-  std::string result = DotsToUnderscores(service->full_name());
-  return UnderscoresToCamelCase(result, true);
-}
-
-std::string MethodName(const MethodDescriptor* method) {
-  return UnderscoresToCamelCase(method->name(), true);
+  return StringToUpper(enum_value->type()->name()) + "_" + StringToUpper(enum_value->name());
 }
 
 std::string StringifyDefaultValue(const FieldDescriptor* field) {
@@ -243,6 +207,14 @@ std::string StringifyDefaultValue(const FieldDescriptor* field) {
   }
   // Never reaches here
   return "";
+}
+
+std::string MessageEnumName(const Descriptor* descriptor) {
+  return "E_" + StringToUpper(descriptor->name()) + "_DATA";
+}
+
+std::string MessageFieldName(const FieldDescriptor* field) {
+  return "P_" + StringToUpper(field->name());
 }
 
 }  // namespace pawn

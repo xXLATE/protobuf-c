@@ -82,85 +82,23 @@ MessageGenerator::MessageGenerator(const Descriptor* descriptor)
 
 MessageGenerator::~MessageGenerator() {}
 
-void MessageGenerator::GenerateStructDefinition(io::Printer* printer) {
-  std::string struct_name = StructName(descriptor_);
-  
-  printer->Print("// $full_name$\n", "full_name", descriptor_->full_name());
-  printer->Print("enum struct $struct_name$ {\n", "struct_name", struct_name);
+void MessageGenerator::GenerateEnumDefinition(io::Printer* printer) {
+  printer->Print(
+    "// Message: $full_name$\n"
+    "enum $enum_name$ {\n",
+    "full_name", descriptor_->full_name(),
+    "enum_name", MessageEnumName(descriptor_));
   printer->Indent();
-  
-  // Generate fields
+
   for (int i = 0; i < descriptor_->field_count(); i++) {
     const FieldDescriptor* field = descriptor_->field(i);
-    GenerateFieldDefinition(field, printer);
+    printer->Print(
+      "$field_name$,\n",
+      "field_name", MessageFieldName(field));
   }
-  
+
   printer->Outdent();
-  printer->Print("}\n\n");
-}
-
-void MessageGenerator::GenerateFieldDefinition(const FieldDescriptor* field, io::Printer* printer) {
-  std::string field_type = PawnFieldType(field);
-  std::string field_name = FieldName(field);
-  
-  if (field->is_repeated()) {
-    // For repeated fields, we'll use a simple array approach
-    printer->Print("$type$ $name$[1024]; // repeated field\n", 
-                   "type", field_type,
-                   "name", field_name);
-    printer->Print("int $name$_count;\n",
-                   "name", field_name);
-  } else {
-    printer->Print("$type$ $name$;\n",
-                   "type", field_type,
-                   "name", field_name);
-  }
-}
-
-std::string MessageGenerator::PawnFieldType(const FieldDescriptor* field) {
-  switch (field->type()) {
-    case FieldDescriptor::TYPE_DOUBLE:
-    case FieldDescriptor::TYPE_FLOAT:
-      return "float";
-    case FieldDescriptor::TYPE_INT64:
-    case FieldDescriptor::TYPE_UINT64:
-    case FieldDescriptor::TYPE_INT32:
-    case FieldDescriptor::TYPE_FIXED64:
-    case FieldDescriptor::TYPE_FIXED32:
-    case FieldDescriptor::TYPE_UINT32:
-    case FieldDescriptor::TYPE_SFIXED32:
-    case FieldDescriptor::TYPE_SFIXED64:
-    case FieldDescriptor::TYPE_SINT32:
-    case FieldDescriptor::TYPE_SINT64:
-      return "int";
-    case FieldDescriptor::TYPE_BOOL:
-      return "bool";
-    case FieldDescriptor::TYPE_STRING:
-    case FieldDescriptor::TYPE_BYTES:
-      return "char[256]"; // Fixed size for now
-    case FieldDescriptor::TYPE_ENUM:
-      return EnumName(field->enum_type());
-    case FieldDescriptor::TYPE_MESSAGE:
-      return StructName(field->message_type());
-    default:
-      return "int"; // fallback
-  }
-}
-
-void MessageGenerator::GenerateEnumDefinitions(io::Printer* printer) {
-  // Generate nested enums
-  for (int i = 0; i < descriptor_->enum_type_count(); i++) {
-    EnumGenerator enum_generator(descriptor_->enum_type(i));
-    enum_generator.GenerateDefinition(printer);
-  }
-}
-
-void MessageGenerator::GenerateNestedMessageDefinitions(io::Printer* printer) {
-  // Generate nested messages
-  for (int i = 0; i < descriptor_->nested_type_count(); i++) {
-    MessageGenerator nested_generator(descriptor_->nested_type(i));
-    nested_generator.GenerateStructDefinition(printer);
-  }
+  printer->Print("};\n\n");
 }
 
 }  // namespace pawn

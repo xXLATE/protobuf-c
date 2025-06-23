@@ -38,13 +38,15 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/io/printer.h>
 
-namespace protobuf_pawn {
+namespace google {
+namespace protobuf {
+namespace compiler {
+namespace pawn {
 
 class EnumGenerator {
  public:
   // See generator.cc for the meaning of dllexport_decl.
-  explicit EnumGenerator(const google::protobuf::EnumDescriptor* descriptor,
-                         const std::string& dllexport_decl);
+  explicit EnumGenerator(const google::protobuf::EnumDescriptor* descriptor);
   ~EnumGenerator();
 
   // Generate Pawn enum constants
@@ -52,9 +54,11 @@ class EnumGenerator {
 
  private:
   const google::protobuf::EnumDescriptor* descriptor_;
-  std::string dllexport_decl_;
 };
 
-}  // namespace protobuf_pawn
+}  // namespace pawn
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google
 
 #endif  // PROTOBUF_PAWN_PROTOC_GEN_PAWN_PAWN_ENUM_H__

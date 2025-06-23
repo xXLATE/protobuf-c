@@ -69,6 +69,7 @@
 
 #include <string>
 #include <google/protobuf/descriptor.h>
+#include <google/protobuf/stubs/common.h>
 
 namespace google {
 namespace protobuf {
@@ -89,25 +90,11 @@ class MessageGenerator {
   explicit MessageGenerator(const Descriptor* descriptor);
   ~MessageGenerator();
 
-  // Header stuff.
-
-  // Generate enum struct definition for the message.
-  void GenerateStructDefinition(io::Printer* printer);
-
-  // Generate definitions of nested enums.
-  void GenerateEnumDefinitions(io::Printer* printer);
-
-  // Generate definitions of nested message types.
-  void GenerateNestedMessageDefinitions(io::Printer* printer);
+  // Generates the Pawn enum definition for the message fields.
+  // This enum is used to index into a Pawn array that holds the message data.
+  void GenerateEnumDefinition(io::Printer* printer);
 
  private:
-  // Generate definition for a single field within the struct.
-  void GenerateFieldDefinition(const FieldDescriptor* field, 
-                               io::Printer* printer);
-  
-  // Convert protobuf field type to Pawn type.
-  std::string PawnFieldType(const FieldDescriptor* field);
-
   const Descriptor* descriptor_;
 
   GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(MessageGenerator);

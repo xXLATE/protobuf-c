@@ -68,34 +68,14 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/io/zero_copy_stream.h>
 
-#include <protobuf-c/protobuf-c.pb.h>
-#include "pawn_file.h"
 #include "pawn_generator.h"
+#include "pawn_file.h"
 #include "pawn_helpers.h"
 
-namespace protobuf_pawn {
-
-// Parses a set of comma-delimited name/value pairs, e.g.:
-//   "foo=bar,baz,qux=corge"
-// parses to the pairs:
-//   ("foo", "bar"), ("baz", ""), ("qux", "corge")
-void ParseOptions(const std::string& text, std::vector<std::pair<std::string, std::string> >* output) {
-  std::vector<std::string> parts;
-  SplitStringUsing(text, ",", &parts);
-
-  for (unsigned i = 0; i < parts.size(); i++) {
-    std::string::size_type equals_pos = parts[i].find_first_of('=');
-    std::pair<std::string, std::string> value;
-    if (equals_pos == std::string::npos) {
-      value.first = parts[i];
-      value.second = "";
-    } else {
-      value.first = parts[i].substr(0, equals_pos);
-      value.second = parts[i].substr(equals_pos + 1);
-    }
-    output->push_back(value);
-  }
-}
+namespace google {
+namespace protobuf {
+namespace compiler {
+namespace pawn {
 
 PawnGenerator::PawnGenerator() {}
 PawnGenerator::~PawnGenerator() {}
@@ -104,56 +84,23 @@ bool PawnGenerator::Generate(const google::protobuf::FileDescriptor* file,
                             const std::string& parameter,
                             google::protobuf::compiler::OutputDirectory* output_directory,
                             std::string* error) const {
-  if (file->options().GetExtension(pb_c_file).no_generate())
-    return true;
-
-  std::vector<std::pair<std::string, std::string> > options;
-  ParseOptions(parameter, &options);
-
-  // -----------------------------------------------------------------
-  // parse generator options
-
-  // TODO(kenton):  If we ever have more options, we may want to create a
-  //   class that encapsulates them which we can pass down to all the
-  //   generator classes.  Currently we pass dllexport_decl down to all of
-  //   them via the constructors, but we don't want to have to add another
-  //   constructor parameter for every option.
-
-  // If the dllexport_decl option is passed to the compiler, we need to write
-  // it in front of every symbol that should be exported if this .proto is
-  // compiled into a Windows DLL.  E.g., if the user invokes the protocol
-  // compiler as:
-  //   protoc --pawn_out=dllexport_decl=FOO_EXPORT:outdir foo.proto
-  // then we'll define constants like this:
-  //   const FOO_EXPORT PERSON_ID = 1;
-  // FOO_EXPORT is a macro which should expand to appropriate export declaration.
-  std::string dllexport_decl;
-
-  for (unsigned i = 0; i < options.size(); i++) {
-    if (options[i].first == "dllexport_decl") {
-      dllexport_decl = options[i].second;
-    } else {
-      *error = "Unknown generator option: " + options[i].first;
-      return false;
-    }
-  }
-
-  // -----------------------------------------------------------------
-
   std::string basename = StripProto(file->name());
-  basename.append(".pb-pawn");
+  basename.append(".pb.pawn");
 
-  FileGenerator file_generator(file, dllexport_decl);
+  FileGenerator file_generator(file);
 
   // Generate Pawn include file.
   {
     std::unique_ptr<google::protobuf::io::ZeroCopyOutputStream> output(
       output_directory->Open(basename + ".inc"));
     google::protobuf::io::Printer printer(output.get(), '$');
-    file_generator.GeneratePawnSource(&printer);
+    file_generator.Generate(&printer);
   }
 
   return true;
 }
 
-}  // namespace protobuf_pawn
+}  // namespace pawn
+}  // namespace compiler
+}  // namespace protobuf
+}  // namespace google

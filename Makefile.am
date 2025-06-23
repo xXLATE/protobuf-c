@@ -139,8 +139,6 @@ protoc_gen_pawn_protoc_gen_pawn_SOURCES = \
 	protoc-gen-pawn/pawn_service.cc \
 	protoc-gen-pawn/pawn_service.h \
 	protoc-gen-pawn/compat.h \
-	protobuf-c/protobuf-c.pb.cc \
-	protobuf-c/protobuf-c.pb.h \
 	protoc-gen-pawn/main.cc
 protoc_gen_pawn_protoc_gen_pawn_CXXFLAGS = \
 	$(AM_CXXFLAGS) \
@@ -248,6 +246,21 @@ t_version_version_SOURCES = \
 	t/version/version.c
 t_version_version_LDADD = \
 	protobuf-c/libprotobuf-c.la
+
+# Pawn tests
+TESTS += t/test-pawn-enum.sh t/test-pawn-message.sh
+EXTRA_DIST += t/test-pawn-enum.sh t/test-pawn-message.sh
+
+# Rule to generate pawn code from test_enum.proto
+test_enum.pb-pawn.inc: $(top_builddir)/protoc-gen-pawn/protoc-gen-pawn$(EXEEXT) $(top_srcdir)/test_enum.proto
+	$(AM_V_GEN)$(top_builddir)/protoc-gen-pawn/protoc-gen-pawn$(EXEEXT) --pawn_out=$(top_builddir) -I$(top_srcdir) $(top_srcdir)/test_enum.proto
+
+# Rule to generate pawn code from test_message.proto
+test_message.pb-pawn.inc: $(top_builddir)/protoc-gen-pawn/protoc-gen-pawn$(EXEEXT) $(top_srcdir)/test_message.proto
+	$(AM_V_GEN)$(top_builddir)/protoc-gen-pawn/protoc-gen-pawn$(EXEEXT) --pawn_out=$(top_builddir) -I$(top_srcdir) $(top_srcdir)/test_message.proto
+
+BUILT_SOURCES += test_enum.pb-pawn.inc test_message.pb-pawn.inc
+CLEANFILES += test_enum.pb-pawn.inc test_message.pb-pawn.inc
 
 # Issue #204
 check_PROGRAMS += \

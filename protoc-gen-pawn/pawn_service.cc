@@ -33,8 +33,8 @@
 #include "pawn_service.h"
 #include "pawn_helpers.h"
 
-#include <google/protobuf/descriptor.h>
 #include <google/protobuf/io/printer.h>
+#include <google/protobuf/descriptor.h>
 
 namespace google {
 namespace protobuf {
@@ -48,31 +48,13 @@ ServiceGenerator::ServiceGenerator(const ServiceDescriptor* descriptor)
 ServiceGenerator::~ServiceGenerator() {}
 
 void ServiceGenerator::GenerateDefinition(io::Printer* printer) {
-  std::string service_name = ServiceName(descriptor_);
-  
-  printer->Print("// Service constants for $service_name$\n", 
-                 "service_name", descriptor_->name());
-  printer->Print("enum $service_name$Methods {\n", "service_name", service_name);
-  printer->Indent();
-  
-  // Generate method constants
-  for (int i = 0; i < descriptor_->method_count(); i++) {
-    const MethodDescriptor* method = descriptor_->method(i);
-    std::string method_name = MethodName(method);
-    
-    if (i > 0) {
-      printer->Print(",\n");
-}
-    
-    printer->Print("$service_name$_$method_name$ = $number$",
-                   "service_name", service_name,
-                   "method_name", method_name,
-                   "number", std::to_string(i + 1));
-  }
-  
-  printer->Print("\n");
-  printer->Outdent();
-  printer->Print("}\n\n");
+  // Service generation is a placeholder for now.
+  // This can be expanded to generate function forward declarations or other metadata.
+  printer->Print(
+    "// Service: $name$\n"
+    "// Method count: $count$\n\n",
+    "name", descriptor_->name(),
+    "count", std::to_string(descriptor_->method_count()));
 }
 
 }  // namespace pawn

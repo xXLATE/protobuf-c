@@ -37,19 +37,6 @@
 #include "compat.h"
 
 int main(int argc, char* argv[]) {
-  protobuf_pawn::PawnGenerator pawn_generator;
-
-  std::string invocation_name = argv[0];
-  std::string invocation_basename = invocation_name.substr(invocation_name.find_last_of("/") + 1);
-  const std::string standalone_name = "protoc-pawn";
-
-  if (invocation_basename == standalone_name) {
-    GOOGLE_LOG(WARNING) << "`protoc-pawn` is deprecated. Please use `protoc` instead!";
-    google::protobuf::compiler::CommandLineInterface cli;
-    cli.RegisterGenerator("--pawn_out", &pawn_generator, "Generate Pawn .inc files.");
-    cli.SetVersionInfo(PACKAGE_STRING);
-    return cli.Run(argc, argv);
-  }
-
+  google::protobuf::compiler::pawn::PawnGenerator pawn_generator;
   return google::protobuf::compiler::PluginMain(argc, argv, &pawn_generator);
 }
